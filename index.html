@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Faith 🌸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root { --primary-pink: #f8bbd0; --soft-purple: #e1bee7; --deep-pink: #d81b60; --letter-bg: #fffcfd; }
+        body { background-color: #fce4ec; text-align: center; font-family: 'Quicksand', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; box-sizing: border-box; overflow-x: hidden; }
+        .heart { position: fixed; color: rgba(216, 27, 96, 0.2); font-size: 20px; animation: float 4s linear infinite; z-index: -1; bottom: -50px; }
+        @keyframes float { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; } }
+        h1 { font-family: 'Dancing Script', cursive; color: var(--deep-pink); font-size: 3rem; margin: 15px 0; text-shadow: 1px 1px 0 #fff; }
+        .cake-container { position: relative; width: 200px; height: 150px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; margin-bottom: 25px; }
+        .layer-bottom { width: 180px; height: 50px; background: var(--soft-purple); border-radius: 20px; z-index: 1; border-bottom: 4px solid #ce93d8; }
+        .layer-top { width: 140px; height: 40px; background: var(--primary-pink); border-radius: 20px; margin-bottom: -5px; z-index: 2; border-bottom: 4px solid #f48fb1; }
+        .candle { width: 10px; height: 40px; background: repeating-linear-gradient(45deg, #fff, #fff 5px, #f8bbd0 5px, #f8bbd0 10px); border-radius: 10px; z-index: 3; }
+        .flame { width: 16px; height: 24px; background: radial-gradient(circle at bottom, #fff, #ff8800, #ff4400); border-radius: 50% 50% 20% 20%; margin-bottom: 5px; animation: flicker 0.1s infinite alternate; filter: blur(1px); box-shadow: 0 0 15px rgba(255, 165, 0, 0.6); z-index: 4; }
+        #letter-wrapper { display: none; max-width: 500px; width: 90%; background: var(--letter-bg); padding: 30px; border-radius: 30px; box-shadow: 0 10px 30px rgba(216, 27, 96, 0.15); text-align: left; line-height: 1.6; animation: slideUp 0.8s ease-out; margin-top: 15px; border: 2px dashed var(--deep-pink); }
+        .letter-text p { margin-bottom: 12px; font-size: 1.15rem; color: #555; }
+        .letter-header { font-family: 'Dancing Script', cursive; font-weight: bold; color: var(--deep-pink); font-size: 1.8rem; display: block; margin-bottom: 15px; }
+        .letter-footer { font-family: 'Dancing Script', cursive; font-weight: bold; color: var(--deep-pink); font-size: 1.6rem; display: block; margin-top: 10px; }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .btn { padding: 15px 30px; font-size: 1.1rem; font-weight: bold; border: none; border-radius: 50px; cursor: pointer; background: var(--deep-pink); color: white; box-shadow: 0 5px 15px rgba(216, 27, 96, 0.3); }
+    </style>
+</head>
+<body>
+    <h1>Happy Birthday Faith</h1>
+    <div class="cake-container">
+        <div id="flame" class="flame"></div>
+        <div class="candle"></div>
+        <div class="layer-top"></div>
+        <div class="layer-bottom"></div>
+    </div>
+    <button id="mainBtn" class="btn" onclick="startMic()">Open Your Surprise ✨</button>
+    <div id="letter-wrapper">
+        <span class="letter-header">Dearest Faith,</span>
+        <div class="letter-text">
+            <p>I wanted to take a moment to reach out and wish you the happiest of birthdays!</p>
+            <p>Looking back, high school was quite a ride, and I honestly think your "happy-go-lucky" energy was the main thing that kept our group sane. You have such a unique way of making stressful days feel light just by being yourself.</p>
+            <p>I’m also incredibly glad that we’ve kept the friendship going through CODM. Having a reliable teammate who actually makes the game fun and doesn't take things too seriously until it’s time to secure the win is a rare find. You’re definitely the MVP of our sessions!</p>
+            <p>I hope your day is as bright and funny as you are. Let’s get a few rounds in soon I’m ready for another carry!</p>
+        </div>
+        <span class="letter-footer">Best regards,<br>Denver</span>
+    </div>
+
+    <script>
+        let audioCtx; let isSuccess = false;
+        function playBdaySong() {
+            const melody = [392, 392, 440, 392, 523, 493, 392, 392, 440, 392, 587, 523];
+            const timing = [0.4, 0.2, 0.6, 0.6, 0.6, 1.2, 0.4, 0.2, 0.6, 0.6, 0.6, 1.2];
+            let time = audioCtx.currentTime;
+            melody.forEach((freq, i) => {
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(freq, time);
+                gain.gain.setValueAtTime(0, time);
+                gain.gain.linearRampToValueAtTime(0.1, time + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.0001, time + timing[i]);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(time); osc.stop(time + timing[i]);
+                time += timing[i];
+            });
+            setTimeout(playBdaySong, 8000); 
+        }
+        async function startMic() {
+            const btn = document.getElementById('mainBtn');
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') await audioCtx.resume();
+            playBdaySong();
+            btn.innerText = "Blow on the Mic! 🌬️";
+            btn.disabled = true;
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const source = audioCtx.createMediaStreamSource(stream);
+                const analyser = audioCtx.createAnalyser();
+                source.connect(analyser);
+                const data = new Uint8Array(analyser.frequencyBinCount);
+                const check = () => {
+                    if (isSuccess) return;
+                    analyser.getByteFrequencyData(data);
+                    let vol = data.reduce((a, b) => a + b) / data.length;
+                    if (vol > 45) triggerSuccess(); else requestAnimationFrame(check);
+                };
+                check();
+            } catch (e) { 
+                btn.innerText = "Mic Error - Tap to View"; 
+                btn.disabled = false;
+                btn.onclick = triggerSuccess;
+            }
+        }
+        function triggerSuccess() {
+            if(isSuccess) return;
+            isSuccess = true;
+            document.getElementById('flame').style.display = 'none';
+            document.getElementById('mainBtn').style.display = 'none';
+            document.getElementById('letter-wrapper').style.display = 'block';
+            confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 }, colors: ['#f48fb1', '#ce93d8', '#ffffff'] });
+        }
+        setInterval(() => {
+            const h = document.createElement('div'); h.className = 'heart'; h.innerHTML = Math.random() > 0.5 ? '🌸' : '✨';
+            h.style.left = Math.random() * 100 + 'vw';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 4000);
+        }, 600);
+    </script>
+</body>
+</html>
+            
